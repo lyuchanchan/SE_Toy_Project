@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>지하철 정보</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #favoriteList {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+        }
+        h2 {
+            margin-top: 0;
+        }
+    </style>
+    <script>
+        function toggleFavoriteList() {
+            const list = document.getElementById('favoriteList');
+            list.style.display = (list.style.display === 'none' || list.style.display === '') ? 'block' : 'none';
+        }
+
+        function navigateToFavorite(line, station) {
+            const form = document.createElement('form');
+            form.method = 'post';
+            form.action = "{{ url_for('search') }}";
+
+            const lineInput = document.createElement('input');
+            lineInput.type = 'hidden';
+            lineInput.name = 'line';
+            lineInput.value = line;
+            form.appendChild(lineInput);
+
+            const stationInput = document.createElement('input');
+            stationInput.type = 'hidden';
+            stationInput.name = 'station';
+            stationInput.value = station;
+            form.appendChild(stationInput);
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
+</head>
+<body>
+    <h1>지하철 정보 시스템</h1>
+
+    <form action="{{ url_for('search') }}" method="post">
+        <label for="line">호선:</label>
+        <select name="line" id="line" required>
+            {% for line in lines %}
+                <option value="{{ line }}">{{ line }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="station">역 이름:</label>
+        <input type="text" id="station" name="station" required aria-required="true" placeholder="역 이름을 입력하세요">
+
+        <button type="submit">검색</button>
+    </form>
+
+    <button onclick="toggleFavoriteList()">즐겨찾기</button>
+    <button onclick="location.href='https://www.seoulmetro.co.kr/kr/page.do?menuIdx=354'">노선도</button>
+
+    <div id="favoriteList" style="display: none;">
+        <h2>즐겨찾기 목록</h2>
+        <ul>
+            {% for favorite in favorites %}
+                <li>
+                    <button onclick="navigateToFavorite('{{ favorite[0] }}', '{{ favorite[1] }}')">
+                        {{ favorite[1] }} ({{ favorite[0] }})
+                    </button>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>
