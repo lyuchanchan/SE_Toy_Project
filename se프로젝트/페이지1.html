@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>지하철 도착 정보</title>
+<style>
+  body, .header, .footer, .nav-item, button, select {
+    font-family: Arial, sans-serif;
+    border-radius: 5px;
+  }
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #f0f8ff;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  .header, .footer {
+    text-align: center;
+    padding: 30px;
+    background-color: #1e90ff;
+    color: #fff;
+  }
+  .header {
+    font-size: 24px;
+  }
+  .content { 
+    height: 250px;
+    margin: 30px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .search-section {
+    text-align: center;
+    padding-bottom: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  select, button {
+    padding: 15px;
+    border: solid 1px #1e90ff;
+    font-size: 16px;
+    margin: 0 10px;
+  }
+  button {
+    background-color: #1e90ff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+  }
+  .footer {
+    margin-top: auto;
+    display: flex;
+    justify-content: center;
+  }
+  .nav-item {
+    flex: 1;
+    text-align: center;
+    padding: 15px;
+    background-color: #fff;
+    margin: 0 10px;
+    cursor: pointer;
+    color: #1e90ff;
+    border: solid 1px #1e90ff;
+  }
+  .nav-item:hover {
+    background-color: #87cefa;
+  }
+  .map-image {
+    max-width: 100%;
+    height: auto;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">지하철 도착 정보</div>
+
+<div class="content">
+  <img src="/Users/lyuchan/Create/Coding/2024_setoy/지하철이미지/사진1.jpeg" class="map-image" width="250" height="250">
+</div>
+
+<div class="search-section">
+  <select id="line-select" onchange="updateStations()">
+    <option value="호선">호선</option>
+    <option value="1호선">1호선</option>
+    <option value="2호선">2호선</option>
+    <option value="3호선">3호선</option>
+    <option value="4호선">4호선</option>
+    <option value="5호선">5호선</option>
+    <option value="6호선">6호선</option>
+    <option value="7호선">7호선</option>
+    <option value="8호선">8호선</option>
+    <option value="9호선">9호선</option>
+  </select>
+  <select id="station-select">
+    <option>출발역</option>
+  </select>
+  <button onclick="location.href='page2.html'">검색</button>
+</div>
+
+<div class="footer">
+  <a href="http://www.seoulmetro.co.kr/kr/cyberStation.do" target="_blank" class="nav-item">노선도</a>
+  <div class="nav-item">즐겨찾기</div>
+</div>
+
+<script>
+  const stations = {
+    "1호선": ["연천", "전곡", "청산", "소요산", "동두천", "보산", "동두천중앙", "지행", "봉양", "덕정(서정대)", "회천중앙", "덕계", "양주(경동대)", "녹양", "가능(을지대병원)", "의정부", "회룡", "망월사(신한대 제1캠퍼스)", "도봉산", "도봉", "방학(도봉구청)", "창동", "녹천", "월계(인덕대)", "광운대", "석계", "신이문", "외대앞", "회기", "청량리(서울시립대입구)", "제기동(한국건강관리협회)", "신설동", "동묘앞", "동대문", "종로5가(삼양그룹)", "종로3가", "종각", "시청", "서울역(지하)", "남영", "용산", "노량진", "대방", "신길", "영등포", "신도림", "구로", "구일(동양미래대)", "개봉", "오류동", "온수(성공회대입구)", "역곡(가톨릭대)", "소사(서울신학대)", "부천(부천대)", "중동", "송내", "부개", "부평(가톨릭대 인천성모병원)", "백운", "동암", "간석", "주안", "도화", "제물포(인천대학교 제물포캠퍼스)", "도원", "동인천"],
+    "2호선": ["신설동", "용두", "신답", "왕십리", "상왕십리", "신당", "동대문역사문화공원", "을지로4가", "을지로3가", "을지로입구", "시청", "충정로", "아현", "이대", "신촌", "홍대입구", "합정", "당산", "영등포구청", "문래", "신도림", "대림", "구로디지털단지", "신대방", "신림", "봉천", "서울대입구", "낙성대", "사당", "방배", "서초", "교대", "강남", "역삼", "선릉", "삼성", "종합운동장", "잠실새내", "잠실", "잠실나루", "강변", "구의", "건대입구", "신도림", "도림천", "양천구청", "신정네거리", "까치산"],
+     "3호선": ["대화", "주엽", "정발산", "마두", "백석", "대곡", "화정", "원당", "원흥", "삼송", "지축", "구파발", "연신내", "불광", "녹번", "홍제", "무악재", "독립문", "경복궁", "안국", "종로3가", "을지로3가", "충무로", "동대입구", "약수", "금호", "옥수", "압구정", "신사", "잠원", "고속터미널", "교대", "남부터미널", "양재", "매봉", "도곡", "대치", "학여울", "대청", "일원", "수서", "가락시장", "경찰병원", "오금"]
+  };
+
+  function updateStations() {
+    const lineSelect = document.getElementById('line-select');
+    const stationSelect = document.getElementById('station-select');
+    const selectedLine = lineSelect.value;
+
+    stationSelect.innerHTML = '<option>출발역</option>';
+
+    if (stations[selectedLine]) {
+      stations[selectedLine].forEach(station => {
+        const option = document.createElement('option');
+        option.value = station;
+        option.text = station;
+        stationSelect.appendChild(option);
+      });
+    }
+  }
+</script>
+
+
+</body>
+</html>
