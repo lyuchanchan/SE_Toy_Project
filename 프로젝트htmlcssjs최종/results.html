@@ -72,6 +72,7 @@
         <!-- 데이터가 여기에 추가됩니다 -->
       </tbody>
     </table>
+    <button onclick="addToFavorites()">즐겨찾기 추가</button>
     <button onclick="window.history.back()">돌아가기</button>
   </div>
   <script>
@@ -105,6 +106,24 @@
         `;
         tableBody.appendChild(row);
       });
+    }
+
+    // 즐겨찾기 목록을 저장할 배열
+    let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+
+    // 즐겨찾기 추가 함수
+    function addToFavorites() {
+      const stationName = urlParams.get('station');
+
+      if (stationName && !favorites.includes(stationName)) {
+        favorites.push(stationName);
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+        alert(`${stationName}이(가) 즐겨찾기에 추가되었습니다.`);
+      } else if (favorites.includes(stationName)) {
+        alert(`${stationName}은(는) 이미 즐겨찾기에 추가되어 있습니다.`);
+      } else {
+        alert('먼저 출발역을 선택하세요.');
+      }
     }
   </script>
 </body>
