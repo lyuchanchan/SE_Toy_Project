@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>지하철 도착 정보</title>
+<style>
+  body, .header, .footer, .nav-item, button, select {
+    font-family: Arial, sans-serif;
+    border-radius: 5px;
+  }
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #f0f8ff;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  .header, .footer {
+    text-align: center;
+    padding: 30px;
+    background-color: #1e90ff;
+    color: #fff;
+  }
+  .header {
+    font-size: 24px;
+  }
+  .content { 
+    height: 250px;
+    margin: 30px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .search-section {
+    text-align: center;
+    padding-bottom: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  select, button {
+    padding: 15px;
+    border: solid 1px #1e90ff;
+    font-size: 16px;
+    margin: 0 10px;
+  }
+  button {
+    background-color: #1e90ff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+  }
+  .footer {
+    margin-top: auto;
+    display: flex;
+    justify-content: center;
+  }
+  .nav-item {
+    flex: 1;
+    text-align: center;
+    padding: 15px;
+    background-color: #fff;
+    margin: 0 10px;
+    cursor: pointer;
+    color: #1e90ff;
+    border: solid 1px #1e90ff;
+  }
+  .nav-item:hover {
+    background-color: #87cefa;
+  }
+  .map-image {
+    max-width: 100%;
+    height: auto;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">지하철 도착 정보</div>
+
+<div class="content">
+  <img src="지하철이미지/사진1.jpeg" class="map-image" width="250" height="250">
+</div>
+
+<div class="search-section">
+  <select id="line-select" onchange="updateStations()">
+    <option value="">호선</option>
+    <option value="1호선">1호선</option>
+    <option value="2호선">2호선</option>
+    <option value="3호선">3호선</option>
+    <option value="4호선">4호선</option>
+    <option value="5호선">5호선</option>
+    <option value="6호선">6호선</option>
+    <option value="7호선">7호선</option>
+    <option value="8호선">8호선</option>
+    <option value="9호선">9호선</option>
+  </select>
+  <select id="station-select">
+    <option>출발역</option>
+  </select>
+  <button onclick="search()">검색</button>
+</div>
+
+<div class="footer">
+  <a href="http://www.seoulmetro.co.kr/kr/cyberStation.do" target="_blank" class="nav-item">노선도</a>
+  <div class="nav-item" onclick="toggleFavoriteList()">즐겨찾기</div>
+</div>
+
+<script>
+  const stations = {
+    "1호선": ["연천", "전곡", "청산", "소요산", "동두천", "보산", "동두천중앙", "지행", "봉양", "덕정(서정대)", "회천중앙", "덕계", "양주(경동대)", "녹양", "가능(을지대병원)", "의정부", "회룡", "망월사(신한대 제1캠퍼스)", "도봉산", "도봉", "방학(도봉구청)", "창동", "녹천", "월계", "광운대(북부역)", "신설동", "동묘앞", "제기동", "신답", "용답", "신당", "상왕십리", "왕십리", "한양대", "신당역", "한양대", "왕십리", "상왕십리", "신당", "용답", "신답", "제기동", "신설동", "광운대(북부역)", "월계", "녹천", "창동", "방학(도봉구청)", "도봉", "도봉산"],
+    "2호선": ["강남", "역삼", "선릉", "삼성", "잠실", "잠실새내", "신천", "구의", "강변", "잠실", "송파", "문정", "가락시장", "남부터미널", "서초", "교대", "강남", "역삼", "선릉", "삼성", "잠실", "잠실새내", "신천", "구의", "강변", "잠실", "송파", "문정", "가락시장", "남부터미널", "서초", "교대", "강남", "역삼", "선릉", "삼성", "잠실", "잠실새내"],
+    "3호선": ["대화", "주엽", "삼송", "화정", "능곡", "용두", "상곡", "금곡", "화정", "삼송", "주엽", "대화"],
+    "4호선": ["당고개", "상계", "노원", "중계", "하계", "미아사거리", "미아", "수유", "서울", "한성대", "혜화", "동대문", "신설동", "제기동", "동묘앞", "광운대", "녹천", "창동", "도봉", "방학", "창동", "녹천", "광운대", "동묘앞", "제기동", "신설동", "동대문", "혜화", "한성대", "서울", "수유", "미아", "미아사거리", "하계", "중계", "노원", "상계", "당고개"],
+    "5호선": ["방화", "김포공항", "송정", "마곡", "우장산", "화곡", "목동", "오목교", "영등포시장", "영등포구청", "신길", "여의도", "용산", "이태원", "서울역", "신정", "목동", "오목교", "영등포구청", "영등포시장", "여의도", "신길", "용산", "이태원", "서울역"],
+    "6호선": ["응암", "역촌", "구산", "디지털미디어시티", "상암", "월드컵경기장", "광화문", "종각", "시청", "서울역", "남산", "광화문", "종각", "시청", "서울역", "남산"],
+    "7호선": ["장암", "도봉산", "수유", "미아사거리", "하계", "중계", "노원", "상계", "당고개"],
+    "8호선": ["암사", "천호", "강동", "장지역", "상일동", "고덕", "강일", "둔촌동", "몽촌토성", "잠실", "석촌", "송파", "문정", "가락시장"],
+    "9호선": ["개화", "김포공항", "공항시장", "신방화", "황학", "종합운동장", "삼성", "봉은사", "강남", "역삼", "선릉", "삼성", "잠실", "잠실새내"],
+    "경의중앙선": ["소요산", "동두천", "지행", "동두천중앙", "보산", "덕정", "회천", "덕계", "양주", "녹양", "가능", "의정부", "회룡", "망월사", "도봉산", "도봉", "방학", "창동"],
+    "공항철도": ["인천", "검암", "계양", "부평", "부평삼거리", "송도", "석남", "부평", "부천", "마곡", "가양", "선유도", "당산", "구로디지털단지"],
+    "경춘선": ["청량리", "회기", "중랑", "면목", "사가정", "용마산", "아차산", "광운대", "상봉", "중화", "신내", "가양", "용마산"],
+    "수인분당선": ["수원", "매교", "수원", "성복", "가천대", "정자", "삼평", "상갈", "모란", "죽전", "보정", "신갈", "서현", "수원", "매교"],
+    "신분당선": ["강남", "역삼", "선릉", "삼성", "잠실", "잠실새내", "신천", "구의", "강변", "송파", "문정"],
+    "자기부상철도": ["인천공항", "검암", "계양", "부평", "부평삼거리", "송도", "석남", "부평", "부천"]
+  };
+
+  function updateStations() {
+    const line = document.getElementById('line-select').value;
+    const stationSelect = document.getElementById('station-select');
+    stationSelect.innerHTML = '<option>역 선택</option>';
+
+    if (line) {
+      const stationsList = stations[line] || [];
+      stationsList.forEach(station => {
+        const option = document.createElement('option');
+        option.value = station;
+        option.textContent = station;
+        stationSelect.appendChild(option);
+      });
+    }
+  }
+
+  function search() {
+    const line = document.getElementById('line-select').value;
+    const station = document.getElementById('station-select').value;
+
+    if (line && station) {
+      const form = document.createElement('form');
+      form.method = 'post';
+      form.action = '/search';
+
+      const lineInput = document.createElement('input');
+      lineInput.type = 'hidden';
+      lineInput.name = 'line';
+      lineInput.value = line;
+      form.appendChild(lineInput);
+
+      const stationInput = document.createElement('input');
+      stationInput.type = 'hidden';
+      stationInput.name = 'station';
+      stationInput.value = station;
+      form.appendChild(stationInput);
+
+      document.body.appendChild(form);
+      form.submit();
+    } else {
+      alert('호선과 역을 선택해 주세요.');
+    }
+  }
+
+  function toggleFavoriteList() {
+    const list = document.getElementById('favoriteList');
+    list.style.display = (list.style.display === 'none' || list.style.display === '') ? 'block' : 'none';
+  }
+</script>
+
+</body>
+</html>

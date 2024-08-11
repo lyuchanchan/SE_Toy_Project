@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>검색 결과</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            padding: 5px 0;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #007BFF;
+            transition: text-decoration 0.3s;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .no-data {
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ station }}역 실시간 도착정보</h1>
+
+    <h2>상행</h2>
+    <ul>
+        {% if up_arrivals|length == 0 %}
+            <li class="no-data">실시간 도착 정보가 없습니다.</li>
+        {% else %}
+            {% for item in up_arrivals %}
+                <li>{{ item['trainLineNm'] }} - {{ item['arvlMsg2'] }} ({{ item['arvlMsg3'] }})</li>
+            {% endfor %}
+        {% endif %}
+    </ul>
+
+    <h2>하행</h2>
+    <ul>
+        {% if down_arrivals|length == 0 %}
+            <li class="no-data">현재 하행 열차 정보가 없습니다.</li>
+        {% else %}
+            {% for item in down_arrivals %}
+                <li>{{ item['trainLineNm'] }} - {{ item['arvlMsg2'] }} ({{ item['arvlMsg3'] }})</li>
+            {% endfor %}
+        {% endif %}
+    </ul>
+
+    <form action="{{ url_for('add_to_favorites') }}" method="post">
+        <input type="hidden" name="line" value="{{ line }}">
+        <input type="hidden" name="station" value="{{ station }}">
+        <button type="submit" aria-label="즐겨찾기에 추가">즐겨찾기에 추가</button>
+    </form>
+    <br>
+    <a href="{{ url_for('home') }}" aria-label="홈으로 돌아가기">돌아가기</a>
+
+</body>
+</html>
