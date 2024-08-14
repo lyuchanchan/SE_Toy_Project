@@ -66,14 +66,27 @@
   </div>
   
   <script>
-    function registerUser(event) {
+    async function registerUser(event) {
       event.preventDefault();
       const username = document.getElementById('username').value;
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
 
-      // 서버로 회원가입 데이터 전송 로직 추가 필요
-      console.log('회원가입 데이터:', { username, email, password });
+      const response = await fetch('/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, email, password })
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        alert(result.message);
+        window.location.href = 'index.html'; // 회원가입 후 메인 페이지로 이동
+      } else {
+        alert(result.error);
+      }
     }
   </script>
 </body>
