@@ -28,15 +28,6 @@
       border: 2px solid #007bff; /* 파란색 테두리 */
       margin-bottom: 20px; /* 아래 여백 추가 */
     }
-    .signup-container {
-      background-color: #ffffff;
-      padding: 10px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      text-align: center;
-      border: 2px solid #007bff; /* 파란색 테두리 */
-      width: 300px; /* 크기 줄이기 */
-    }
     label, select, button, input {
       display: block;
       margin: 10px auto;
@@ -59,6 +50,9 @@
     button:hover {
       background-color: #0056b3; /* 어두운 파란색 배경 */
     }
+    .signup-button {
+      margin-top: 20px; /* 위쪽 여백 추가 */
+    }
   </style>
 </head>
 <body>
@@ -78,25 +72,13 @@
     <button onclick="viewFavorites()">즐겨찾기 목록 보기</button>
   </div>
   
-  <div class="signup-container">
-    <h2>회원가입</h2>
-    <form id="signupForm" onsubmit="registerUser(event)">
-      <label for="username">사용자 이름:</label>
-      <input type="text" id="username" name="username" required>
-      
-      <label for="email">이메일:</label>
-      <input type="email" id="email" name="email" required>
-      
-      <label for="password">비밀번호:</label>
-      <input type="password" id="password" name="password" required>
-      
-      <button type="submit">회원가입</button>
-    </form>
-  </div>
+  <button class="signup-button" onclick="location.href='signup.html'">회원가입</button> <!-- 회원가입 버튼 이동 -->
   
   <script>
     const stations = {
-      //추후 역 이름 추가
+      "1호선": ["연천", "전곡", "청산", "소요산", "동두천", "보산", "동두천중앙", "지행", "봉양", "덕정(서정대)", "회천중앙", "덕계", "양주(경동대)", "녹양", "가능(을지대병원)", "의정부", "회룡", "망월사(신한대 제1캠퍼스)", "도봉산", "도봉", "방학(도봉구청)", "창동", "녹천", "월계(인덕대)", "광운대", "석계", "신이문", "외대앞", "회기", "청량리(서울시립대입구)", "제기동(한국건강관리협회)", "신설동", "동묘앞", "동대문", "종로5가(삼양그룹)", "종로3가", "종각", "시청", "서울역(지하)", "남영", "용산", "노량진", "대방", "신길", "영등포", "신도림", "구로", "구일(동양미래대)", "개봉", "오류동", "온수(성공회대입구)", "역곡(가톨릭대)", "소사(서울신학대)", "부천(부천대)", "중동", "송내", "부개", "부평(가톨릭대 인천성모병원)", "백운", "동암", "간석", "주안", "도화", "제물포(인천대학교 제물포캠퍼스)", "도원", "동인천"],
+    "2호선": ["신설동", "용두", "신답", "왕십리", "상왕십리", "신당", "동대문역사문화공원", "을지로4가", "을지로3가", "을지로입구", "시청", "충정로", "아현", "이대", "신촌", "홍대입구", "합정", "당산", "영등포구청", "문래", "신도림", "대림", "구로디지털단지", "신대방", "신림", "봉천", "서울대입구", "낙성대", "사당", "방배", "서초", "교대", "강남", "역삼", "선릉", "삼성", "종합운동장", "잠실새내", "잠실", "잠실나루", "강변", "구의", "건대입구", "신도림", "도림천", "양천구청", "신정네거리", "까치산"],
+     "3호선": ["대화", "주엽", "정발산", "마두", "백석", "대곡", "화정", "원당", "원흥", "삼송", "지축", "구파발", "연신내", "불광", "녹번", "홍제", "무악재", "독립문", "경복궁", "안국", "종로3가", "을지로3가", "충무로", "동대입구", "약수", "금호", "옥수", "압구정", "신사", "잠원", "고속터미널", "교대", "남부터미널", "양재", "매봉", "도곡", "대치", "학여울", "대청", "일원", "수서", "가락시장", "경찰병원", "오금"]
     };
 
     function updateStations() {
@@ -129,16 +111,6 @@
 
     function viewFavorites() {
       window.location.href = 'favorites.html';
-    }
-
-    function registerUser(event) {
-      event.preventDefault();
-      const username = document.getElementById('username').value;
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-
-      // 서버로 회원가입 데이터 전송 로직 추가 필요
-      console.log('회원가입 데이터:', { username, email, password });
     }
   </script>
 </body>
