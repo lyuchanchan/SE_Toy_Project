@@ -1,9 +1,24 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
-# 사용자 데이터를 임시로 저장 (간단함을 위해 메모리에 저장)
-users = []
+# SQLite 데이터베이스 설정
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+
+# 사용자 모델 정의
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(100), unique=True, nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    password = db.Column(db.String(100), nullable=False)
+
+# 데이터베이스 초기화
+with app.app_context():
+    db.create_all()
 
 @app.route('/')
 def home():
@@ -17,20 +32,20 @@ def signup():
         email = data.get('email')
         password = data.get('password')
 
-        for user in users:
-            if user['email'] == email:
-                return jsonify({'error': 'User already exists!'}), 400
+        # 이메일로 사용자 검색
+        existing_user = User.query.filter_by(email=email).first()
 
-        users.append({
-            'username': username,
-            'email': email,
-            'password': password
-        })
+        if existing_user:
+            return jsonify({'error': 'User already exists!'}), 400
+
+        # 새로운 사용자 생성
+        new_user = User(username=username, email=email, password=password)
+        db.session.add(new_user)
+        db.session.commit()
 
         return jsonify({'message': 'User registered successfully!'}), 201
 
     return render_template('signup.html')
-
 
 @app.route('/favorites')
 def favorites():
