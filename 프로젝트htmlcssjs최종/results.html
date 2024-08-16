@@ -18,6 +18,11 @@
     h1 {
       color: #007bff; /* 파란색 텍스트 */
     }
+    h2 {
+      margin-top: 50px; /* 간격을 줄이기 위해 값을 조정 */
+      color: #007bff;
+    }
+
     .container {
       background-color: #ffffff;
       padding: 20px;
@@ -60,6 +65,7 @@
 <body>
   <div class="container">
     <h1 id="stationTitle">지하철 도착 정보 결과</h1>
+    <h2>상행선</h2>
     <table>
       <thead>
         <tr>
@@ -68,8 +74,21 @@
           <th>지하철 현재 위치</th>
         </tr>
       </thead>
-      <tbody id="arrivalTableBody">
-        <!-- 데이터가 여기에 추가됩니다 -->
+      <tbody id="upwardArrivalTableBody">
+        <!-- 상행선 데이터가 여기에 추가됩니다 -->
+      </tbody>
+    </table>
+    <h2>하행선</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>노선명</th>
+          <th>실시간 도착 정보</th>
+          <th>지하철 현재 위치</th>
+        </tr>
+      </thead>
+      <tbody id="downwardArrivalTableBody">
+        <!-- 하행선 데이터가 여기에 추가됩니다 -->
       </tbody>
     </table>
     <button onclick="addToFavorites()">즐겨찾기 추가</button>
@@ -92,19 +111,25 @@
 
     function displayArrivalInfo(data) {
       const arrivalList = data.realtimeArrivalList;
-      const tableBody = document.getElementById('arrivalTableBody');
-      tableBody.innerHTML = ''; // 기존 데이터를 초기화
+      const upwardTableBody = document.getElementById('upwardArrivalTableBody');
+      const downwardTableBody = document.getElementById('downwardArrivalTableBody');
+      upwardTableBody.innerHTML = ''; // 기존 데이터를 초기화
+      downwardTableBody.innerHTML = ''; // 기존 데이터를 초기화
 
       arrivalList.forEach(arrival => {
         const trainLine = arrival.trainLineNm.split(' ')[0]; // 첫 번째 단어만 사용
-
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>${trainLine}</td>
           <td>${arrival.arvlMsg2}</td>
           <td>${arrival.arvlMsg3}</td>
         `;
-        tableBody.appendChild(row);
+
+        if (arrival.updnLine === '상행' || arrival.updnLine === '내선') {
+          upwardTableBody.appendChild(row);
+        } else {
+          downwardTableBody.appendChild(row);
+        }
       });
     }
 
