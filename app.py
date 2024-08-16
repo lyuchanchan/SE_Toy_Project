@@ -1,34 +1,49 @@
-from flask import Flask, request, jsonify
-from werkzeug.security import generate_password_hash
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 
 app = Flask(__name__)
 
-# 임시 데이터베이스 (딕셔너리 사용)
-users = {}
+# 사용자 데이터를 임시로 저장 (간단함을 위해 메모리에 저장)
+users = []
 
-@app.route('/signup', methods=['POST'])
+@app.route('/')
+def home():
+    return redirect(url_for('search'))
+
+@app.route('/signup', methods=['GET', 'POST'])
 def signup():
-    data = request.get_json()
-    username = data.get('username')
-    email = data.get('email')
-    password = data.get('password')
+    if request.method == 'POST':
+        # 폼 데이터 가져오기
+        username = request.json['username']
+        email = request.json['email']
+        password = request.json['password']
+            
+        # 사용자가 이미 존재하는지 확인
+        for user in users:
+            if user['email'] == email:
+                return jsonify({'error': 'User already exists!'}), 400
+        
+        # 새로운 사용자를 목록에 추가
+        users.append({
+            'username': username,
+            'email': email,
+            'password': password  # 참고: 실제 애플리케이션에서는 항상 비밀번호를 해시 처리하세요!
+        })
 
-    if not username or not email or not password:
-        return jsonify({'error': '모든 필드를 입력해주세요.'}), 400
+        return jsonify({'message': 'User registered successfully!'}), 201
 
-    if email in users:
-        return jsonify({'error': '이미 존재하는 이메일입니다.'}), 400
+    return render_template('signup.html')
 
-    # 비밀번호 해싱
-    hashed_password = generate_password_hash(password)
+@app.route('/favorites')
+def favorites():
+    return render_template('favorites.html')
 
-    # 사용자 정보 저장
-    users[email] = {
-        'username': username,
-        'password': hashed_password
-    }
+@app.route('/results')
+def results():
+    return render_template('results.html')
 
-    return jsonify({'message': '회원가입이 완료되었습니다.'}), 201
+@app.route('/search')
+def search():
+    return render_template('search.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
