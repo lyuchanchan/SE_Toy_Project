@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>회원가입</title>
-  <link rel="stylesheet" href="styles.css">
+  <!-- Flask에서 정적 파일(styles.css)을 로드할 때는 url_for을 사용합니다. -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -54,17 +55,17 @@
     <form id="signupForm" onsubmit="registerUser(event)">
       <label for="username">사용자 이름:</label>
       <input type="text" id="username" name="username" required>
-      
+
       <label for="email">이메일:</label>
       <input type="email" id="email" name="email" required>
-      
+
       <label for="password">비밀번호:</label>
       <input type="password" id="password" name="password" required>
-      
+
       <button type="submit">회원가입</button>
     </form>
   </div>
-  
+
   <script>
     async function registerUser(event) {
       event.preventDefault();
@@ -72,6 +73,7 @@
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
 
+      // 회원가입 폼 데이터를 Flask 서버로 POST 요청을 보냅니다.
       const response = await fetch('/signup', {
         method: 'POST',
         headers: {
@@ -83,7 +85,7 @@
       const result = await response.json();
       if (response.ok) {
         alert(result.message);
-        window.location.href = 'index.html'; // 회원가입 후 메인 페이지로 이동
+        window.location.href = '/'; // 회원가입 후 메인 페이지로 이동
       } else {
         alert(result.error);
       }

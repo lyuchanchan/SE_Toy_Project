@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>지하철 도착 정보 결과</title>
-  <link rel="stylesheet" href="styles.css">
+  <!-- Flask에서 정적 파일(styles.css)을 로드할 때는 url_for을 사용합니다. -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
   <style>
     body {
       font-family: Arial, sans-serif;
