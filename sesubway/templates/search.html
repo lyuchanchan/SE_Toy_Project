@@ -53,11 +53,15 @@
     .signup-button {
       margin-top: 5px; /* 위쪽 여백 추가 */
     }
+    .map-button {
+  margin-top: 5px; /* 위쪽 여백 추가 */
+    }
+
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>실시간 지하철 도착 정보</h1>
+    <h1>지하철 뚝딱, 등교 뚝딱!</h1>
     <select id="lineSelect" onchange="updateStations()">
       <option value="">호선을 선택하세요</option>
       <option value="1호선">1호선</option>
@@ -73,12 +77,15 @@
     <select id="stationSelect">
       <option value="">출발역을 선택하세요</option>
     </select>
+    <p></p>
     <button onclick="goToResultsPage()">조회 하기</button>
+    ㅡㅡㅡㅡ
     <button onclick="viewFavorites()">즐겨 찾기 목록</button>
-  </div>
-  
-  <button class="signup-button" onclick="location.href='signup.html'">회원가입</button> <!-- 회원가입 버튼 이동 -->
-  
+    <button class="map-button" onclick="location.href='http://www.seoulmetro.co.kr/kr/cyberStation.do'">노선도 보기</button> <!-- 노선도 보기 버튼 추가 -->
+    ㅡㅡㅡㅡ
+    <p></p>
+    <button class="signup-button" onclick="location.href='signup.html'">회원가입</button> <!-- 회원가입 버튼 이동 -->
+  </div>  
   <script>
     const stations = {
       "1호선": ["연천", "전곡", "청산", "소요산", "동두천", "보산", "동두천중앙", "지행", "봉양", "덕정(서정대)", "회천중앙", "덕계", "양주(경동대)", "녹양", "가능(을지대병원)", "의정부", "회룡", "망월사(신한대 제1캠퍼스)", "도봉산", "도봉", "방학(도봉구청)", "창동", "녹천", "월계(인덕대)", "광운대", "석계", "신이문", "외대앞", "회기", "청량리(서울시립대입구)", "제기동(한국건강관리협회)", "신설동", "동묘앞", "동대문", "종로5가(삼양그룹)", "종로3가", "종각", "시청", "서울역(지하)", "남영", "용산", "노량진", "대방", "신길", "영등포", "신도림", "구로", "구일(동양미래대)", "개봉", "오류동", "온수(성공회대입구)", "역곡(가톨릭대)", "소사(서울신학대)", "부천(부천대)", "중동", "송내", "부개", "부평(가톨릭대 인천성모병원)", "백운", "동암", "간석", "주안", "도화", "제물포(인천대학교 제물포캠퍼스)", "도원", "동인천"],
